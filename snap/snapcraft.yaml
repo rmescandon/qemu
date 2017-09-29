@@ -1,0 +1,23 @@
+name: qemu
+version: 0.1-0
+summary: Manages qemu virtual machines
+description: |
+  Launches qemu virtual machines using kvm script
+
+grade: devel
+confinement: devmode
+
+apps:
+  kvm:
+    command: bin/kvm-launcher
+    plugs: [kvm]
+
+parts:
+  kvm:
+    plugin: dump
+    source: bin
+    organize:
+      kvm-launcher: bin/kvm-launcher
+    stage-packages:
+      - qemu-kvm
+

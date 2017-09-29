@@ -5,12 +5,12 @@ description: |
   Launches qemu virtual machines using kvm script
 
 grade: devel
-confinement: devmode
+confinement: strict
 
 apps:
   kvm:
     command: bin/kvm-launcher
-    plugs: [kvm]
+    plugs: [kvm, network-bind, x11]
 
 parts:
   kvm:
@@ -20,4 +20,9 @@ parts:
       kvm-launcher: bin/kvm-launcher
     stage-packages:
       - qemu-kvm
+  snappypreload:
+    plugin: cmake
+    source: snappypreload
+    build-packages:
+      - build-essential
 

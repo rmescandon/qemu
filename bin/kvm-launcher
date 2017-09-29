@@ -1,5 +1,13 @@
 #!/bin/bash
 
-exec $SNAP/usr/bin/kvm -L $SNAP/usr/share/seabios/ -snapshot -m 1500 -net nic -net user,hostfwd=tcp:127.0.0.1:59327-:22 -serial telnet:127.0.0.1:59427,server,nowait -monitor telnet:127.0.0.1:59527,server,nowait $SNAP_DATA/ubuntu-core-16.img
+# use preload trick
+export SNAPPY_PRELOAD=$SNAP
+export LD_PRELOAD="$SNAP/usr/lib/libsnappypreload.so"
+
+exec "$SNAP/usr/bin/kvm" "-L" "$SNAP/usr/share/seabios/" "-snapshot" "-m" \
+ "1500" "-net" "nic" "-net" "user,hostfwd=tcp:127.0.0.1:59327-:22" \
+ "-serial" "telnet:127.0.0.1:59427,server,nowait" \
+ "-monitor" "telnet:127.0.0.1:59527,server,nowait" \
+ "$SNAP_DATA/ubuntu-core-16.img"
 
 

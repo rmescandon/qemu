@@ -1,13 +1,26 @@
-#!/bin/bash
+#!/bin/sh
 
-# use preload trick
+# Add needed library paths not already included by wrapper.
+case $SNAP_ARCH in
+amd64)
+    TRIPLET="x86_64-linux-gnu"
+    ;;
+armhf)
+    TRIPLET="arm-linux-gnueabihf"
+    ;;
+arm64)
+    TRIPLET="aarch64-linux-gnu"
+    ;;
+*)
+    TRIPLET="$SNAP_ARCH-linux-gnu"
+    ;;
+esac
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/usr/lib/$TRIPLET/mesa"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/usr/lib/$TRIPLET/pulseaudio"
+
+# Use preload trick to prefix binaries path references with $SNAP
 export SNAPPY_PRELOAD=$SNAP
 export LD_PRELOAD="$SNAP/usr/lib/libsnappypreload.so"
 
-exec "$SNAP/usr/bin/kvm" "-L" "$SNAP/usr/share/seabios/" "-snapshot" "-m" \
- "1500" "-net" "nic" "-net" "user,hostfwd=tcp:127.0.0.1:59327-:22" \
- "-serial" "telnet:127.0.0.1:59427,server,nowait" \
- "-monitor" "telnet:127.0.0.1:59527,server,nowait" \
- "$SNAP_DATA/ubuntu-core-16.img"
-
-
+exec "$SNAP/usr/bin/kvm" "-L" "$SNAP/usr/share/seabios/" "$@"

@@ -10,7 +10,7 @@ confinement: strict
 apps:
   kvm:
     command: bin/kvm-launcher
-    plugs: [kvm, network-bind, x11]
+    plugs: [home, kvm, network-bind, x11]
 
 parts:
   kvm:
